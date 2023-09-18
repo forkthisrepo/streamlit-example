@@ -1,38 +1,53 @@
-from collections import namedtuple
-import altair as alt
-import math
-import pandas as pd
 import streamlit as st
+import openai
+import re
 
-"""
-# Welcome to Streamlit!
+# Initialize OpenAI API
+openai.api_key = "your_openai_api_key_here"
 
-Edit `/streamlit_app.py` to customize this app to your heart's desire :heart:
+def translate_text(text):
+    # Call OpenAI API for translation (Replace this with your actual API call)
+    # prompt = f"Translate the following English text to Hindi: {text}"
+    # response = openai.Completion.create(
+    #     engine="text-davinci-002",
+    #     prompt=prompt,
+    #     max_tokens=100
+    # )
+    # translated_text = response.choices[0].text.strip()
+    translated_text = text
+    return translated_text
 
-If you have any questions, checkout our [documentation](https://docs.streamlit.io) and [community
-forums](https://discuss.streamlit.io).
+# Streamlit App
+st.title("English to Hindi Translator")
 
-In the meantime, below is an example of what you can do with just a few lines of code:
-"""
+# Instructions
+st.write("## Instructions")
+st.write("1. Enter the text you want to translate in the text box below.")
+st.write("2. Click the 'Translate' button and wait for the process to complete.")
+st.write("3. The translated text will appear below, which you can post-edit.")
 
+# Text Input
+user_input = st.text_area("Enter text to translate (Max 50 words):", max_chars=500)
+word_count = len(re.findall(r'\w+', user_input))
 
-with st.echo(code_location='below'):
-    total_points = st.slider("Number of points in spiral", 1, 5000, 2000)
-    num_turns = st.slider("Number of turns in spiral", 1, 100, 9)
+# Word Counter
+st.write(f"Word Count: {word_count}/50")
 
-    Point = namedtuple('Point', 'x y')
-    data = []
+# Disable button if word count exceeds 50
+if word_count > 50:
+    st.warning("Word limit exceeded!")
+    st.stop()
 
-    points_per_turn = total_points / num_turns
-
-    for curr_point_num in range(total_points):
-        curr_turn, i = divmod(curr_point_num, points_per_turn)
-        angle = (curr_turn + 1) * 2 * math.pi * i / points_per_turn
-        radius = curr_point_num / total_points
-        x = radius * math.cos(angle)
-        y = radius * math.sin(angle)
-        data.append(Point(x, y))
-
-    st.altair_chart(alt.Chart(pd.DataFrame(data), height=500, width=500)
-        .mark_circle(color='#0068c9', opacity=0.5)
-        .encode(x='x:Q', y='y:Q'))
+# Translate Button
+if st.button("Translate"):
+    with st.spinner("Translating..."):
+        # Disable the button
+        st.write("Translation in progress...")
+        st.write("Please wait...")
+        
+        # Call the translation function
+        translated_text = translate_text(user_input)
+        
+        # Display the translated text
+        st.write("## Translated Text")
+        st.text_area("You can post-edit the text below:", value=translated_text, max_chars=None)
