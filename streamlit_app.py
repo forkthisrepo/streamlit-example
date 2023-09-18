@@ -11,7 +11,7 @@ encoding = tiktoken.encoding_for_model("gpt-4")
 def translate_text(text):
     # Initialize conversation with a detailed system message
     system_message = """
-    Given the English text as a task, go through the English text word by word and first exhaustively identify all the terminology words in the below English text and then use the most appropriate pure Hindi word for those terminologies as per the usage of that word in that context (refer point 1 of below-mentioned translation guidelines). And once done for all the terminology present in the text, first prepare a draft translation and then refine it based on style guides and the original English text to produce the final translation of the following English text into Hindi, strictly adhering to the below pointwise translation style guidelines:
+    Given the English text as a task, go through the English text word by word and first exhaustively identify all the terminology words in the below English text and then use the most appropriate pure Hindi word for those terminologies as per the usage of that word in that context (refer point 1 of below-mentioned translation guidelines). And once done for all the terminology present in the text, first prepare a draft translation as per the guidelines and then closely review it to check if it meets the guidelines completely. find out all issues and accordingly refine it based on style guides and the original English text to produce the final translation of the following English text into Hindi, strictly adhering to the below pointwise translation style guidelines:
 
     Guidelines:
     1. Pure Hindi Vocabulary: Use pure Hindi words and avoid any English words transliterated into Devanagari script.
@@ -56,14 +56,14 @@ st.write("2. Click the 'Translate' button and wait for the process to complete."
 st.write("3. The translated text will appear below, which you can post-edit.")
 
 # Text Input
-user_input = st.text_area("Enter text to translate (Max 250 words):", max_chars=500)
+user_input = st.text_area("Enter text to translate (Max 70 words):", max_chars=1000)
 word_count = len(re.findall(r'\w+', user_input))
 
 # Word Counter
-st.write(f"Word Count: {word_count}/250")
+st.write(f"Word Count: {word_count}/70 (max word limit)")
 
-# Disable button if word count exceeds 250
-if word_count > 250:
+# Disable button if word count exceeds 70
+if word_count > 70:
     st.warning("Word limit exceeded!")
     st.stop()
 
@@ -92,4 +92,4 @@ if st.button("Translate"):
         st.write(f"Prompt token: {experiment_prompt_token } and completion token: {experiment_completion_token}")
         st.write(f"cost calculation = (experiment_prompt_token * 0.03/1000 + experiment_completion_token*0.06/1000)*USD2INR)")
         st.write(f"Cost of this translation: {COST} INR ")
-        st.text_area("You can post-edit the text below:", value=translated_text, max_chars=None)
+        st.text(translated_text)
