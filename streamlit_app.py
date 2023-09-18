@@ -33,7 +33,7 @@ def translate_text(text):
     
     # Call OpenAI API for translation
     response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
+        model="gpt-4",
         messages=messages
     )
     
@@ -49,19 +49,19 @@ st.title("English to Hindi Translator")
 
 # Instructions
 st.write("## Instructions")
-st.write("1. Enter the text you want to translate in the text box below.")
+st.write("1. Enter the text you want to translate in the text box below. I kept the word limit to reduce the cost as the prompt size is already too high.")
 st.write("2. Click the 'Translate' button and wait for the process to complete.")
 st.write("3. The translated text will appear below, which you can post-edit.")
 
 # Text Input
-user_input = st.text_area("Enter text to translate (Max 50 words):", max_chars=500)
+user_input = st.text_area("Enter text to translate (Max 250 words):", max_chars=500)
 word_count = len(re.findall(r'\w+', user_input))
 
 # Word Counter
-st.write(f"Word Count: {word_count}/50")
+st.write(f"Word Count: {word_count}/250")
 
-# Disable button if word count exceeds 50
-if word_count > 50:
+# Disable button if word count exceeds 250
+if word_count > 250:
     st.warning("Word limit exceeded!")
     st.stop()
 
@@ -84,6 +84,6 @@ if st.button("Translate"):
         # Display the translated text
         st.write("## Translated Text")
         USD2INR = 83
-        COST = (experiment_prompt_token * 0.03/1000 + experiment_completion_token*0.06/1000)*USD2INR
+        COST = round(((experiment_prompt_token * 0.03/1000 + experiment_completion_token*0.06/1000)*USD2INR),2)
         st.write(f"Cost of this translation: {COST} INR ")
         st.text_area("You can post-edit the text below:", value=translated_text, max_chars=None)
