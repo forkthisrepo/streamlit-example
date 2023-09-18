@@ -40,14 +40,20 @@ if word_count > 50:
     st.stop()
 
 # Translate Button
+# Create a placeholder for the "Translation in progress..." message
+progress_placeholder = st.empty()
+
 if st.button("Translate"):
     with st.spinner("Translating..."):
-        # Disable the button
-        st.write("Translation in progress...")
-        st.write("Please wait...")
+        # Display the "Translation in progress..." message
+        progress_placeholder.write("Translation in progress...")
+        progress_placeholder.write("Please wait...")
         
         # Call the translation function
         translated_text = translate_text(user_input)
+        
+        # Clear the "Translation in progress..." message
+        progress_placeholder.empty()
         
         # Display the translated text
         st.write("## Translated Text")
