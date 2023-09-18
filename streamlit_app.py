@@ -1,9 +1,10 @@
 import streamlit as st
 import openai
 import re
+import os
 
 # Initialize OpenAI API
-openai.api_key = "your_openai_api_key_here"
+openai.api_key = os.environ["openai_api_key"]
 
 def translate_text(text):
     # Call OpenAI API for translation (Replace this with your actual API call)
