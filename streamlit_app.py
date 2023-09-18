@@ -2,9 +2,11 @@ import streamlit as st
 import openai
 import re
 import os
+import tiktoken
 
 # Initialize OpenAI API
 openai.api_key = os.environ["openai_api_key"]
+encoding = tiktoken.encoding_for_model("gpt-4")
 
 def translate_text(text):
     # Initialize conversation with a detailed system message
@@ -49,7 +51,7 @@ st.title("English to Hindi Translator")
 
 # Instructions
 st.write("## Instructions")
-st.write("1. Enter the text you want to translate in the text box below. I kept the word limit to reduce the cost as the prompt size is already too high.")
+st.write("1. Enter the text you want to translate in the text box below. I kept the word limit to reduce the cost as the prompt size is already too high (~400 tokens).")
 st.write("2. Click the 'Translate' button and wait for the process to complete.")
 st.write("3. The translated text will appear below, which you can post-edit.")
 
@@ -70,6 +72,8 @@ if word_count > 250:
 progress_placeholder = st.empty()
 
 if st.button("Translate"):
+    input_token_count = len(encoding.encode(user_input))
+    st.write(f"Token count of input english text: {input_token_count}")
     with st.spinner("Translating..."):
         # Display the "Translation in progress..." message
         progress_placeholder.write("Translation in progress...")
@@ -85,5 +89,7 @@ if st.button("Translate"):
         st.write("## Translated Text")
         USD2INR = 83
         COST = round(((experiment_prompt_token * 0.03/1000 + experiment_completion_token*0.06/1000)*USD2INR),2)
+        st.write(f"Prompt token: {experiment_prompt_token } and completion token: {experiment_completion_token}")
+        st.write(f"cost calculation = (experiment_prompt_token * 0.03/1000 + experiment_completion_token*0.06/1000)*USD2INR)")
         st.write(f"Cost of this translation: {COST} INR ")
         st.text_area("You can post-edit the text below:", value=translated_text, max_chars=None)
